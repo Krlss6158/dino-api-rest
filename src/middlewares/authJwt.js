@@ -5,7 +5,7 @@ import Role from "../models/Role";
 
 export const verifyToken = async (req, res, next) => {
   let token = req.headers["x-access-token"];
-  if (!token) return res.status(403).json({ message: "No token provided" });
+  if (!token) return res.json({ status: 401, message: "No token provided" });
 
   try {
     const decoded = jwt.verify(token, config.SECRET);
@@ -13,11 +13,11 @@ export const verifyToken = async (req, res, next) => {
 
     /* const user = await User.findById(req.email, { password: 0 }); */
     const user = await User.findOne({ email: req.email });
-    if (!user) return res.status(404).json({ message: "No user found" });
+    if (!user) return res.json({ status: 404, message: "No user found" });
 
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Unauthorized!" });
+    return res.json({ status: 403, message: "Unauthorized!" });
   }
 };
 
@@ -54,9 +54,9 @@ export const isAdmin = async (req, res, next) => {
       }
     }
 
-    return res.status(403).json({ message: "Require Admin Role!" });
+    return res.json({ status: 403, message: "Require Admin Role!" });
   } catch (error) {
     console.log(error)
-    return res.status(500).send({ message: error });
+    return res.json({ status: 500, message: error });
   }
 };

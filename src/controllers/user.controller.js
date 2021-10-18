@@ -4,6 +4,9 @@ import jwt from "jsonwebtoken";
 import config from "../config";
 
 export const createUser = async (req, res) => {
+  if (!req.body.first_name || !req.body.last_name || !req.body.email || !req.body.password) {
+    return res.json({ status: 401, message: 'Algunos campos son requeridos' })
+  }
   try {
     const { first_name,
       last_name,
@@ -40,7 +43,7 @@ export const createUser = async (req, res) => {
     // saving the new user
     const savedUser = await user.save();
 
-    return res.status(200).json({
+    return res.status(201).json({
       _id: savedUser._id,
       first_name: savedUser.first_name,
       last_name: savedUser.last_name,
@@ -54,7 +57,7 @@ export const createUser = async (req, res) => {
       roles: savedUser.roles,
     });
   } catch (error) {
-    res.status(500).json({ message: error })
+    res.json({ status: 500, message: error })
     console.error(error);
   }
 };
